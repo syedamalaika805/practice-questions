@@ -1,0 +1,38 @@
+import java.util.*;
+
+public class PrimeNumbers {
+    public static void main(String[] args) {
+        int n = 19;
+        ArrayList<Integer> primes = getPrimes(n);
+        
+        System.out.println("Prime numbers up to " + n + ":");
+        for (int i = 0; i < primes.size(); i++) {
+            System.out.print(primes.get(i));
+            if (i < primes.size() - 1) {
+                System.out.print(", ");
+            }
+        }
+    }
+    
+    public static ArrayList<Integer> getPrimes(int n) {
+        ArrayList<Integer> primeList = new ArrayList<>();
+        
+        for (int num = 2; num <= n; num++) {
+            boolean isPrime = true;
+            
+            // Optimization: check only up to square root of num
+            for (int i = 2; i * i <= num; i++) {
+                if (num % i == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+            
+            if (isPrime) {
+                primeList.add(num);
+            }
+        }
+        
+        return primeList;
+    }
+}
