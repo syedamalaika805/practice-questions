@@ -1,0 +1,83 @@
+import java.util.*;
+
+public class EmployeeHierarchy {
+    public static void main(String[] args) {
+        String[][] arr = {
+            {"A", "C"}, {"B", "C"}, {"C", "F"},
+            {"D", "E"}, {"E", "F"}, {"F", "F"}
+        };
+        
+        Map<String, Integer> result = countEmployees(arr);
+        
+        System.out.println("Number of employees under each manager:");
+        for (Map.Entry<String, Integer> entry : result.entrySet()) {
+            System.out.println(entry.getKey() + " manages " + entry.getValue() + " employees");
+        }
+    }
+    
+    public static Map<String, Integer> countEmployees(String[][] arr) {
+        // Map to store direct reports for each manager
+        Map<String, List<String>> directReports = new HashMap<>();
+        
+        // Instead of HashSet, we use another HashMap to track managers
+        // Key = employee name, Value = true if they are a manager
+        Map<String, Boolean> isManager = new HashMap<>();
+        
+        // Build the hierarchy
+        for (int i = 0; i < arr.length; i++) {
+            String emp = arr[i][0];
+            String mgr = arr[i][1];
+            
+            // Mark this person as a manager
+            isManager.put(mgr, true);
+            
+            // If manager doesn't exist in directReports, create empty list
+            if (!directReports.containsKey(mgr)) {
+                directReports.put(mgr, new ArrayList<>());
+            }
+            
+            // Avoid self-loop (F manages F)
+            if (!emp.equals(mgr)) {
+                directReports.get(mgr).add(emp);
+            }
+        }
+        
+        // Result map to store count for each manager
+        Map<String, Integer> result = new HashMap<>();
+        
+        // Calculate count for each manager
+        for (String mgr : directReports.keySet()) {
+            int count = countEmployeesUnder(mgr, directReports, isManager);
+            result.put(mgr, count);
+        }
+        
+        return result;
+    }
+    
+    // Recursive function to count only non-manager employees
+    public static int countEmployeesUnder(String mgr, 
+                                         Map<String, List<String>> directReports,
+                                         Map<String, Boolean> isManager) {
+        if (!directReports.containsKey(mgr)) {
+            return 0;
+        }
+        
+        List<String> reports = directReports.get(mgr);
+        int total = 0;
+        
+        for (int i = 0; i < reports.size(); i++) {
+            String emp = reports.get(i);
+            
+            // Check if this person is a manager using HashMap
+            if (!isManager.containsKey(emp) || !isManager.get(emp)) {
+                // Not a manager, so count them
+                total++;
+            } else {
+                // Is a manager, so count their subordinates too
+                total += countEmployeesUnder(emp, directReports, isManager);
+            }
+        }
+        
+        return total;
+    }
+}
