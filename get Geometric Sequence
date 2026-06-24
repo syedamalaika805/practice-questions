@@ -1,0 +1,19 @@
+public static ArrayList<Double>
+getGeometricSequence(double a, double r, int n) {
+    ArrayList<Double> sequence = new ArrayList<>();
+    
+    if (n <= 0) {
+        return sequence;
+    }
+    
+    double term = a;
+    int count = 0;
+    
+    while (count < n) {
+        sequence.add(term);
+        term = term * r;
+        count++;
+    }
+    
+    return sequence;
+}
